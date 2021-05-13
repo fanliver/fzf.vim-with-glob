@@ -1,6 +1,16 @@
 # [WIP] fzf.vim-with-glob
 An instruction about how to customize fzf.vim with ripgrep to support glob
 
+Search text in all files
+![image](https://user-images.githubusercontent.com/6322508/118121461-bf357380-b41b-11eb-919c-422e5f2c5000.png)
+
+Search text in non-test file
+![image](https://user-images.githubusercontent.com/6322508/118121471-c0ff3700-b41b-11eb-9a62-2d31eac684b7.png)
+
+Search text in test file only
+![image](https://user-images.githubusercontent.com/6322508/118121484-c3fa2780-b41b-11eb-88de-05b20231ab36.png)
+
+
 ## Customize fzf reload when typing
 To understand about fzf event bindings, please read
 [Fzf - Execute external programs](https://github.com/junegunn/fzf#executing-external-programs).
@@ -56,10 +66,12 @@ the glob and the search keyword.
     function vim_rg 
         set -l query $argv[1] # assign the argument to variable `query`
 
-        set -l queries (string match -r '@(\S+)\s+(.+)' $query) # check if the query matches with the regex
+        # check if the query matches with the regex 
+        set -l queries (string match -r '@(\S+)\s+(.+)' $query) 
         set -l ex_queries (string match -r '!(\S+)\s+(.+)' $query)
 
-        if test -n "$queries"
+        # call rg command with corresponding glob
+        if test -n "$queries" 
             rg --column --line-number --no-heading --color=always --smart-case --iglob $queries[2] -- $queries[3] || true
         else if test -n "$ex_queries"
             rg --column --line-number --no-heading --color=always --smart-case --iglob !$ex_queries[2] -- $ex_queries[3] || true
@@ -69,8 +81,8 @@ the glob and the search keyword.
     end
 
     ```
-    The above function will take the pattern as input, split the glob
-    and the real keyword and then run RipGrep command to do the search.
+    The above function will take the pattern as input, split into the glob
+    and the real keyword, then run RipGrep command to do the search.
     Don't forget to make your function globally available for your system.
     For Fish, just put it in `~/.config/fish/functions/` directory.
     Now you can call the function from anywhere.
